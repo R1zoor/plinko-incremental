@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Plinko Incremental</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Plinko Incremental</h1>
+
+  <div class="tab-container">
+    <div class="tabs">
+      <button class="tab active" data-tab="gameTab">Game</button>
+      <button class="tab" data-tab="upgradesTab">Upgrades</button>
+      <button class="tab" data-tab="prestigeTab">Prestige</button>
+    </div>
+
+    <!-- Game -->
+    <div class="tab-content active" id="gameTab">
+      <div id="top-ui">
+        <div>Coins: <span id="coins">0</span></div>
+        <div>Ball level: <span id="ballLevel">1</span></div>
+      </div>
+
+      <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <!-- Upgrades -->
+    <div class="tab-content" id="upgradesTab">
+      <div class="upgrade-coins">
+        Coins: <span id="coinsUpgrades">0</span>
+      </div>
+
+      <div class="upgrade-card">
+        <h2>Ball Value</h2>
+        <p>Increase coins per drop.</p>
+        <div class="upgrade-row">
+          <span>Level: <span id="ballLevelUpgrade">1</span></span>
+          <button id="upgradeBallBtn">
+            Upgrade (Cost: <span id="upgradeCost">10</span>)
+          </button>
+        </div>
+      </div>
+
+      <div class="upgrade-card">
+        <h2>Max Balls</h2>
+        <p>Increase max active balls on board.</p>
+        <div class="upgrade-row">
+          <span>Max balls: <span id="maxBalls">1</span></span>
+          <button id="upgradeMaxBallsBtn">
+            Upgrade (Cost: <span id="maxBallsCost">50</span>)
+          </button>
+        </div>
+      </div>
+
+      <div class="upgrade-card">
+        <h2>Auto Drop</h2>
+        <p>Automatically drop balls over time.</p>
+        <div class="upgrade-row">
+          <span>Level: <span id="autoDropLevel">0</span></span>
+          <button id="upgradeAutoDropBtn">
+            Upgrade (Cost: <span id="autoDropCost">100</span>)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prestige -->
+    <div class="tab-content" id="prestigeTab">
+      <div class="prestige-card">
+        <h2>Crystals</h2>
+        <p>
+          Permanent currency gained by resetting your progress.<br />
+          More all‑time coins = more crystals.
+        </p>
+
+        <div class="prestige-row">
+          <div>
+            <div>Total coins ever:</div>
+            <div class="prestige-value">
+              <span id="allTimeCoins">0</span>
+            </div>
+          </div>
+          <div>
+            <div>Current crystals:</div>
+            <div class="prestige-value">
+              <span id="crystals">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="prestige-row">
+          <div>
+            <div>Crystals on reset:</div>
+            <div class="prestige-value">
+              <span id="crystalsGain">0</span>
+            </div>
+          </div>
+          <div>
+            <div>Income multiplier:</div>
+            <div class="prestige-value">
+              x<span id="crystalMultiplier">1.00</span>
+            </div>
+          </div>
+        </div>
+
+        <button id="prestigeBtn" class="prestige-btn" disabled>
+          Prestige (reset & gain crystals)
+        </button>
+
+        <p class="prestige-hint">
+          Tip: prestige when progress slows down. You keep crystals forever and start faster.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings button & panel -->
+  <button id="settingsToggleBtn" class="settings-fab">⚙</button>
+
+  <div id="settingsPanel" class="settings-panel">
+    <div class="settings-panel-inner">
+      <div class="settings-panel-header">
+        <h2>Settings</h2>
+        <button id="settingsCloseBtn" class="settings-close">✕</button>
+      </div>
+
+      <div class="settings-card">
+        <h3>Visual Effects</h3>
+        <label class="settings-row">
+          <span>Hit popups ( +coins )</span>
+          <input type="checkbox" id="hitEffectsToggle" checked />
+        </label>
+      </div>
+
+      <div class="settings-card danger">
+        <h3>Progress</h3>
+        <p>This will delete all your progress and crystals on this device.</p>
+        <button id="hardResetBtn">Hard reset</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
