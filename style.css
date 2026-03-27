@@ -9,10 +9,10 @@
 body {
   background: #020617;
   color: #e5e7eb;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
+  /* убираем центрирование, даём занять весь экран */
+  display: block;
+  margin: 0;
+  padding: 8px 4px;
 }
 
 h1 {
@@ -24,12 +24,10 @@ h1 {
 .tab-container {
   width: 100%;
   max-width: 420px;
-  background: #020617;
-  border-radius: 12px;
-  border: 1px solid #1f2937;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
+  margin: 0 auto;
+  /* высоту не задаём, пусть подстраивается */
 }
+
 
 .tabs {
   display: flex;

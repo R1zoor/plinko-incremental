@@ -57,11 +57,13 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
-  const width = Math.min(window.innerWidth - 20, 400);
-  const height = Math.min(window.innerHeight - 220, 600);
+  const width = Math.min(window.innerWidth - 24, 380);
+  // чуть агрессивнее урезаем высоту под webview
+  const height = Math.min(window.innerHeight - 260, 520);
   canvas.width = width;
   canvas.height = height;
 }
+
 resizeCanvas();
 window.addEventListener('resize', () => {
   resizeCanvas();
