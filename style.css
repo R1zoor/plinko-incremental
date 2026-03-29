@@ -6,45 +6,32 @@
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* Вьюпорт без скролла */
 html, body {
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  margin: 0;
+  padding: 0;
   background: #020617;
   color: #e5e7eb;
+  overflow: auto; /* можно скроллить/зумить пальцами */
 }
 
-/* Центруем игру по вертикали/горизонтали */
 body {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding: 10px;
 }
 
-/* Масштабируем всё содержимое */
-#appRoot {
-  transform-origin: top center;
-  transform: scale(0.9);
+h1 {
+  margin: 10px 0 14px;
+  font-size: 24px;
 }
 
-/* ещё сильнее уменьшаем на маленьких экранах */
-@media (max-height: 740px) {
-  #appRoot {
-    transform: scale(0.8);
-  }
-}
-
-@media (max-height: 660px) {
-  #appRoot {
-    transform: scale(0.7);
-  }
-}
-
-/* Табы / контейнер игры */
+/* Табы */
 .tab-container {
   width: 100%;
-  max-width: 320px;
+  max-width: 420px;
   background: #020617;
   border-radius: 12px;
   border: 1px solid #1f2937;
@@ -61,13 +48,13 @@ body {
 
 .tab {
   flex: 1;
-  padding: 8px 0;
+  padding: 10px 0;
   cursor: pointer;
   border: none;
   background: transparent;
   color: #9ca3af;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
 }
@@ -84,7 +71,7 @@ body {
 /* Контент табов */
 .tab-content {
   display: none;
-  padding: 8px;
+  padding: 10px;
 }
 
 .tab-content.active {
@@ -95,8 +82,8 @@ body {
 #top-ui {
   display: flex;
   justify-content: space-between;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 #top-ui > div {
@@ -104,20 +91,20 @@ body {
   background: #020617;
   border-radius: 8px;
   border: 1px solid #111827;
-  padding: 4px 6px;
-  font-size: 12px;
+  padding: 6px 8px;
+  font-size: 13px;
 }
 
 /* Кнопки */
 button {
-  padding: 6px 10px;
+  padding: 8px 12px;
   border: none;
   border-radius: 8px;
   background: #22c55e;
   color: #022c22;
   font-weight: 600;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
   transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.2s ease;
 }
 
@@ -149,9 +136,9 @@ button:disabled {
 
 /* Coins в Upgrades */
 .upgrade-coins {
-  margin-bottom: 6px;
-  font-size: 12px;
-  padding: 4px 6px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  padding: 6px 8px;
   border-radius: 8px;
   border: 1px solid #111827;
   background: #020617;
@@ -162,27 +149,27 @@ button:disabled {
   background: #020617;
   border-radius: 10px;
   border: 1px solid #111827;
-  padding: 8px;
-  margin-bottom: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .upgrade-card h2 {
-  font-size: 14px;
+  font-size: 15px;
   margin-bottom: 4px;
 }
 
 .upgrade-card p {
-  font-size: 11px;
+  font-size: 12px;
   color: #9ca3af;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .upgrade-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  gap: 8px;
+  font-size: 13px;
 }
 
 /* Prestige */
@@ -190,29 +177,29 @@ button:disabled {
   background: #020617;
   border-radius: 10px;
   border: 1px solid #1f2937;
-  padding: 8px;
+  padding: 10px;
 }
 
 .prestige-card h2 {
-  font-size: 16px;
-  margin-bottom: 4px;
+  font-size: 18px;
+  margin-bottom: 6px;
 }
 
 .prestige-card p {
-  font-size: 11px;
+  font-size: 12px;
   color: #9ca3af;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .prestige-row {
   display: flex;
   justify-content: space-between;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .prestige-value {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -222,18 +209,18 @@ button:disabled {
 }
 
 .prestige-hint {
-  font-size: 10px;
+  font-size: 11px;
   color: #6b7280;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 /* Settings floating button */
 .settings-fab {
   position: fixed;
-  right: 10px;
-  bottom: 10px;
-  width: 34px;
-  height: 34px;
+  right: 12px;
+  bottom: 12px;
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
   padding: 0;
   display: flex;
@@ -241,7 +228,7 @@ button:disabled {
   justify-content: center;
   background: #111827;
   color: #e5e7eb;
-  font-size: 16px;
+  font-size: 18px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
   z-index: 50;
 }
@@ -263,11 +250,11 @@ button:disabled {
 
 .settings-panel-inner {
   width: 100%;
-  max-width: 320px;
+  max-width: 360px;
   background: #020617;
   border-radius: 12px;
   border: 1px solid #1f2937;
-  padding: 10px;
+  padding: 12px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
 }
 
@@ -275,16 +262,16 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .settings-panel-header h2 {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .settings-close {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border-radius: 999px;
   background: #111827;
@@ -296,27 +283,27 @@ button:disabled {
   background: #020617;
   border-radius: 10px;
   border: 1px solid #111827;
-  padding: 8px;
-  margin-bottom: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .settings-card h3 {
-  font-size: 14px;
-  margin-bottom: 4px;
+  font-size: 15px;
+  margin-bottom: 6px;
 }
 
 .settings-card p {
-  font-size: 11px;
+  font-size: 12px;
   color: #9ca3af;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .settings-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
+  gap: 8px;
+  font-size: 13px;
 }
 
 .settings-card.danger {
@@ -333,8 +320,12 @@ button:disabled {
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
-/* Стекло для узких экранов */
+/* Немного адаптива */
 @media (max-width: 360px) {
+  h1 {
+    font-size: 20px;
+  }
+
   .upgrade-row,
   .settings-row,
   .prestige-row {
@@ -345,5 +336,11 @@ button:disabled {
   button {
     width: 100%;
     text-align: center;
+  }
+
+  .settings-fab {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
   }
 }

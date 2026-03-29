@@ -14,7 +14,7 @@ let autoDropTimer = 0;
 
 // Prestige
 let allTimeCoins = 0;
-let allTimeCoinsSpentOnPrestige = 0; // учитываем уже "потраченные" на престиж монеты
+let allTimeCoinsSpentOnPrestige = 0;
 let crystals = 0;
 let crystalMultiplier = 1;
 
@@ -52,19 +52,27 @@ const settingsToggleBtn = document.getElementById('settingsToggleBtn');
 const settingsPanel = document.getElementById('settingsPanel');
 const settingsCloseBtn = document.getElementById('settingsCloseBtn');
 
+// Telegram WebApp (не обязателен, просто чтобы не падало в браузере)
+let tg = null;
+try {
+  if (window.Telegram && window.Telegram.WebApp) {
+    tg = window.Telegram.WebApp;
+    tg.expand();
+  }
+} catch (e) {
+  console.warn('Telegram WebApp not available', e);
+}
+
 // --- Canvas ---
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
-  // берем почти всю ширину контейнера
-  const width = Math.min(window.innerWidth - 40, 300);
-  // высоту ограничиваем сильнее, чтобы с верхним UI и вкладками влезало
-  const height = Math.min(window.innerHeight - 260, 440);
+  const width = Math.min(window.innerWidth - 20, 400);
+  const height = Math.min(window.innerHeight - 220, 600);
   canvas.width = width;
   canvas.height = height;
 }
-
 resizeCanvas();
 window.addEventListener('resize', () => {
   resizeCanvas();
@@ -298,7 +306,7 @@ function computeCrystalsGain() {
   if (effectiveCoins < 10000) return 0;
 
   const base = effectiveCoins / 10000;
-  const gain = Math.floor(Math.pow(base, 0.4)); // мягкая кривая[web:112][web:114]
+  const gain = Math.floor(Math.pow(base, 0.4));
   return gain;
 }
 
@@ -307,7 +315,7 @@ function updateCrystalMultiplier() {
 }
 
 // --- Save / load ---
-const SAVE_KEY = 'plinko_incremental_save_prestige_v2';
+const SAVE_KEY = 'plinko_incremental_save';
 
 function saveGame() {
   const data = {
