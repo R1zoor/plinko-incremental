@@ -57,8 +57,10 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
-  const width = Math.min(window.innerWidth - 40, 340);
-  const height = Math.min(window.innerHeight - 280, 500);
+  // берем почти всю ширину контейнера
+  const width = Math.min(window.innerWidth - 40, 300);
+  // высоту ограничиваем сильнее, чтобы с верхним UI и вкладками влезало
+  const height = Math.min(window.innerHeight - 260, 440);
   canvas.width = width;
   canvas.height = height;
 }
