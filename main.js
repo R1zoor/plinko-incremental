@@ -57,9 +57,8 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
-  const width = Math.min(window.innerWidth - 24, 380);
-  // чуть агрессивнее урезаем высоту под webview
-  const height = Math.min(window.innerHeight - 260, 520);
+  const width = Math.min(window.innerWidth - 32, 340);
+  const height = Math.min(window.innerHeight - 260, 500);
   canvas.width = width;
   canvas.height = height;
 }

@@ -6,13 +6,37 @@
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+/* Высота экрана и без скролла */
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
   background: #020617;
   color: #e5e7eb;
-  /* убираем центрирование, даём занять весь экран */
-  display: block;
-  margin: 0;
-  padding: 8px 4px;
+}
+
+/* Масштабируем весь UI */
+#appRoot {
+  transform-origin: top center;
+  transform: scale(1);
+}
+
+/* немного уменьшаем на невысоких экранах */
+@media (max-height: 740px) {
+  #appRoot {
+    transform: scale(0.9);
+  }
+}
+
+@media (max-height: 660px) {
+  #appRoot {
+    transform: scale(0.8);
+  }
 }
 
 h1 {
@@ -23,11 +47,14 @@ h1 {
 /* Табы */
 .tab-container {
   width: 100%;
-  max-width: 420px;
+  max-width: 360px; /* было 420 */
   margin: 0 auto;
-  /* высоту не задаём, пусть подстраивается */
+  background: #020617;
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
 }
-
 
 .tabs {
   display: flex;
