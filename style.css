@@ -23,19 +23,19 @@ body {
 /* Масштабируем весь UI */
 #appRoot {
   transform-origin: top center;
-  transform: scale(1);
+  transform: scale(0.8);
 }
 
 /* немного уменьшаем на невысоких экранах */
 @media (max-height: 740px) {
   #appRoot {
-    transform: scale(0.9);
+    transform: scale(0.8);
   }
 }
 
 @media (max-height: 660px) {
   #appRoot {
-    transform: scale(0.8);
+    transform: scale(0.7);
   }
 }
 
@@ -47,7 +47,7 @@ h1 {
 /* Табы */
 .tab-container {
   width: 100%;
-  max-width: 360px; /* было 420 */
+  max-width: 320px; /* было 420 */
   margin: 0 auto;
   background: #020617;
   border-radius: 12px;
