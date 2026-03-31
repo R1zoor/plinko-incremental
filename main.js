@@ -58,6 +58,11 @@ try {
   if (window.Telegram && window.Telegram.WebApp) {
     tg = window.Telegram.WebApp;
     tg.expand();
+
+    tg.setBackgroundColor('#020617');
+    if (tg.setBottomBarColor) {
+      tg.setBottomBarColor('#020617');
+    }
   }
 } catch (e) {
   console.warn('Telegram WebApp not available', e);
@@ -367,7 +372,7 @@ function loadGame() {
 // --- Hard reset ---
 function hardReset() {
   if (!confirm('Hard reset EVERYTHING? This includes crystals.')) return;
-
+  
   coins = 0;
   ballLevel = 1;
   upgradeCost = 10;
