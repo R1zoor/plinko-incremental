@@ -8,12 +8,11 @@
 
 html, body {
   width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
   background: #020617;
   color: #e5e7eb;
-  overflow: auto; /* можно скроллить/зумить пальцами */
+  overflow: auto;
 }
 
 body {
@@ -83,7 +82,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 #top-ui > div {
@@ -93,6 +92,23 @@ h1 {
   border: 1px solid #111827;
   padding: 6px 8px;
   font-size: 13px;
+}
+
+#top-ui-2 {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+#top-ui-2 > div {
+  flex: 1;
+  background: #020617;
+  border-radius: 8px;
+  border: 1px solid #111827;
+  padding: 6px 8px;
+  font-size: 12px;
+  color: #9ca3af;
 }
 
 /* Кнопки */
@@ -212,6 +228,89 @@ button:disabled {
   font-size: 11px;
   color: #6b7280;
   margin-top: 6px;
+}
+
+.prestige-upgrades-title {
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.prestige-upgrade-card {
+  border-color: #1f2937;
+}
+
+.prestige-box-card {
+  margin-top: 6px;
+}
+
+/* Box overlay */
+.box-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+}
+
+.box-overlay.open {
+  display: flex;
+}
+
+.box-overlay-inner {
+  width: 100%;
+  max-width: 380px;
+  background: #020617;
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+  padding: 12px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+}
+
+.box-overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.box-overlay-header h2 {
+  font-size: 18px;
+}
+
+.box-cards {
+  display: flex;
+  gap: 8px;
+}
+
+.box-card {
+  flex: 1;
+  background: #020617;
+  border-radius: 10px;
+  border: 1px solid #111827;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.box-card h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.box-card p {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 8px;
+}
+
+.box-card-choose-btn {
+  width: 100%;
 }
 
 /* Settings floating button */
@@ -342,5 +441,9 @@ button:disabled {
     width: 36px;
     height: 36px;
     font-size: 16px;
+  }
+
+  .box-cards {
+    flex-direction: column;
   }
 }

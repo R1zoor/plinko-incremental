@@ -25,6 +25,11 @@
         <div>Ball level: <span id="ballLevel">1</span></div>
       </div>
 
+      <div id="top-ui-2">
+        <div>Special ball chance: <span id="specialChanceDisplay">5%</span></div>
+        <div>Special ball value: <span id="specialValueDisplay">0.20</span> /hit</div>
+      </div>
+
       <canvas id="gameCanvas"></canvas>
     </div>
 
@@ -74,7 +79,7 @@
         <h2>Crystals</h2>
         <p>
           Permanent currency gained by resetting your progress.<br />
-          More all‑time coins = more crystals.
+          More total coins ever = more crystals.
         </p>
 
         <div class="prestige-row">
@@ -115,7 +120,121 @@
           Tip: prestige when progress slows down. You keep crystals forever and start faster.
         </p>
       </div>
+
+      <!-- Crystal Upgrades -->
+      <div class="prestige-upgrades-title">
+        Crystal Upgrades
+      </div>
+
+      <div class="prestige-upgrades-list">
+        <div class="upgrade-card prestige-upgrade-card">
+          <h2>Prestige Booster</h2>
+          <p>Increase crystals gained on prestige.</p>
+          <div class="upgrade-row">
+            <span>Level: <span id="prestigeBoosterLevel">0</span></span>
+            <button id="buyPrestigeBoosterBtn">
+              Buy (Cost: <span id="prestigeBoosterCost">5</span> crystals)
+            </button>
+          </div>
+        </div>
+
+        <div class="upgrade-card prestige-upgrade-card">
+          <h2>Soft Save</h2>
+          <p>Keep a part of normal upgrades after prestige.</p>
+          <div class="upgrade-row">
+            <span>Level: <span id="softSaveLevel">0</span></span>
+            <button id="buySoftSaveBtn">
+              Buy (Cost: <span id="softSaveCost">5</span> crystals)
+            </button>
+          </div>
+        </div>
+
+        <div class="upgrade-card prestige-upgrade-card">
+          <h2>Prestige Speed</h2>
+          <p>Boost all income to speed up runs.</p>
+          <div class="upgrade-row">
+            <span>Level: <span id="prestigeSpeedLevel">0</span></span>
+            <button id="buyPrestigeSpeedBtn">
+              Buy (Cost: <span id="prestigeSpeedCost">5</span> crystals)
+            </button>
+          </div>
+        </div>
+
+        <div class="upgrade-card prestige-upgrade-card">
+          <h2>Golden Power</h2>
+          <p>Increase special ball hit value and spawn chance.</p>
+          <div class="upgrade-row">
+            <span>Level: <span id="goldenPowerLevel">0</span></span>
+            <button id="buyGoldenPowerBtn">
+              Buy (Cost: <span id="goldenPowerCost">5</span> crystals)
+            </button>
+          </div>
+        </div>
+
+        <div class="upgrade-card prestige-upgrade-card">
+          <h2>Slot Mastery</h2>
+          <p>Increase all slot multipliers permanently.</p>
+          <div class="upgrade-row">
+            <span>Level: <span id="slotMasteryLevel">0</span></span>
+            <button id="buySlotMasteryBtn">
+              Buy (Cost: <span id="slotMasteryCost">5</span> crystals)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crystal Box -->
+      <div class="prestige-card prestige-box-card">
+        <h2>Crystal Box</h2>
+        <p>Buy a box for crystals and choose 1 of 3 random powerful bonuses.</p>
+        <div class="prestige-row">
+          <div>
+            <div>Box price:</div>
+            <div class="prestige-value">
+              <span id="boxCost">10</span> crystals
+            </div>
+          </div>
+        </div>
+        <button id="buyBoxBtn" class="prestige-btn">
+          Buy Box (3 random bonuses)
+        </button>
+      </div>
     </div>
+  </div>
+
+  <!-- Box overlay -->
+  <div id="boxOverlay" class="box-overlay">
+    <div class="box-overlay-inner">
+      <div class="box-overlay-header">
+        <h2>Choose your bonus</h2>
+        <button id="closeBoxBtn" class="settings-close">✕</button>
+      </div>
+      <div class="box-cards">
+        <div class="box-card" data-index="0">
+          <h3 id="boxCardTitle0">Bonus</h3>
+          <p id="boxCardDesc0">Description</p>
+          <button class="box-card-choose-btn" data-index="0">Choose</button>
+        </div>
+        <div class="box-card" data-index="1">
+          <h3 id="boxCardTitle1">Bonus</h3>
+          <p id="boxCardDesc1">Description</p>
+          <button class="box-card-choose-btn" data-index="1">Choose</button>
+        </div>
+        <div class="box-card" data-index="2">
+          <h3 id="boxCardTitle2">Bonus</h3>
+          <p id="boxCardDesc2">Description</p>
+          <button class="box-card-choose-btn" data-index="2">Choose</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dev panel (показывается только в dev режиме) -->
+  <div id="devPanel" style="display:none; margin-top:8px; font-size:12px;">
+    <div style="margin-bottom:4px; color:#9ca3af;">Dev panel</div>
+    <button id="devGiveCoinsBtn">+1e6 Coins</button>
+    <button id="devGiveCrystalsBtn">+100 Crystals</button>
+    <button id="devResetPrestigeSpentBtn">Reset prestige spent</button>
   </div>
 
   <!-- Settings button & panel -->

@@ -1,5 +1,14 @@
 // main.js
 
+let DEV_MODE = false;
+
+// включение из консоли: enableDevMode()
+window.enableDevMode = function () {
+  DEV_MODE = true;
+  alert('Dev mode enabled');
+  updateUI();
+};
+
 // --- Базовые переменные ---
 let coins = 0;
 let ballLevel = 1;
@@ -17,6 +26,31 @@ let allTimeCoins = 0;
 let allTimeCoinsSpentOnPrestige = 0;
 let crystals = 0;
 let crystalMultiplier = 1;
+
+// Prestige upgrades
+let prestigeBoosterLevel = 0;
+let prestigeBoosterCost = 5;
+
+let softSaveLevel = 0;
+let softSaveCost = 5;
+
+let prestigeSpeedLevel = 0;
+let prestigeSpeedCost = 5;
+
+let goldenPowerLevel = 0;
+let goldenPowerCost = 5;
+
+let slotMasteryLevel = 0;
+let slotMasteryCost = 5;
+
+// Box
+let boxCost = 10;
+
+// Special ball
+let baseSpecialChance = 0.05;         // 5%
+let baseSpecialValuePerHit = 0.2;     // per hit at ballLevel 1
+let specialChance;
+let specialValuePerHit;
 
 // Настройки
 let hitEffectsEnabled = true;
@@ -45,6 +79,51 @@ const crystalsGainSpan = document.getElementById('crystalsGain');
 const crystalMultiplierSpan = document.getElementById('crystalMultiplier');
 const prestigeBtn = document.getElementById('prestigeBtn');
 
+// Prestige upgrades UI
+const prestigeBoosterLevelSpan = document.getElementById('prestigeBoosterLevel');
+const prestigeBoosterCostSpan = document.getElementById('prestigeBoosterCost');
+const buyPrestigeBoosterBtn = document.getElementById('buyPrestigeBoosterBtn');
+
+const softSaveLevelSpan = document.getElementById('softSaveLevel');
+const softSaveCostSpan = document.getElementById('softSaveCost');
+const buySoftSaveBtn = document.getElementById('buySoftSaveBtn');
+
+const prestigeSpeedLevelSpan = document.getElementById('prestigeSpeedLevel');
+const prestigeSpeedCostSpan = document.getElementById('prestigeSpeedCost');
+const buyPrestigeSpeedBtn = document.getElementById('buyPrestigeSpeedBtn');
+
+const goldenPowerLevelSpan = document.getElementById('goldenPowerLevel');
+const goldenPowerCostSpan = document.getElementById('goldenPowerCost');
+const buyGoldenPowerBtn = document.getElementById('buyGoldenPowerBtn');
+
+const slotMasteryLevelSpan = document.getElementById('slotMasteryLevel');
+const slotMasteryCostSpan = document.getElementById('slotMasteryCost');
+const buySlotMasteryBtn = document.getElementById('buySlotMasteryBtn');
+
+const boxCostSpan = document.getElementById('boxCost');
+const buyBoxBtn = document.getElementById('buyBoxBtn');
+
+// Special ball UI
+const specialChanceDisplay = document.getElementById('specialChanceDisplay');
+const specialValueDisplay = document.getElementById('specialValueDisplay');
+
+// Box overlay UI
+const boxOverlay = document.getElementById('boxOverlay');
+const closeBoxBtn = document.getElementById('closeBoxBtn');
+const boxCardTitle0 = document.getElementById('boxCardTitle0');
+const boxCardDesc0 = document.getElementById('boxCardDesc0');
+const boxCardTitle1 = document.getElementById('boxCardTitle1');
+const boxCardDesc1 = document.getElementById('boxCardDesc1');
+const boxCardTitle2 = document.getElementById('boxCardTitle2');
+const boxCardDesc2 = document.getElementById('boxCardDesc2');
+const boxCardChooseBtns = document.querySelectorAll('.box-card-choose-btn');
+
+// Dev panel UI
+const devPanel = document.getElementById('devPanel');
+const devGiveCoinsBtn = document.getElementById('devGiveCoinsBtn');
+const devGiveCrystalsBtn = document.getElementById('devGiveCrystalsBtn');
+const devResetPrestigeSpentBtn = document.getElementById('devResetPrestigeSpentBtn');
+
 // Settings
 const hardResetBtn = document.getElementById('hardResetBtn');
 const hitEffectsToggle = document.getElementById('hitEffectsToggle');
@@ -52,13 +131,12 @@ const settingsToggleBtn = document.getElementById('settingsToggleBtn');
 const settingsPanel = document.getElementById('settingsPanel');
 const settingsCloseBtn = document.getElementById('settingsCloseBtn');
 
-// Telegram WebApp (не обязателен, просто чтобы не падало в браузере)
+// Telegram WebApp
 let tg = null;
 try {
   if (window.Telegram && window.Telegram.WebApp) {
     tg = window.Telegram.WebApp;
     tg.expand();
-
     tg.setBackgroundColor('#020617');
     if (tg.setBottomBarColor) {
       tg.setBottomBarColor('#020617');
@@ -74,7 +152,7 @@ const ctx = canvas.getContext('2d');
 
 function resizeCanvas() {
   const width = Math.min(window.innerWidth - 20, 400);
-  const height = Math.min(window.innerHeight - 220, 600);
+  const height = Math.min(window.innerHeight - 260, 600);
   canvas.width = width;
   canvas.height = height;
 }
@@ -95,6 +173,11 @@ const BALL_RADIUS = 6;
 const GRAVITY = 0.25;
 const BOUNCE = 0.8;
 const FRICTION = 0.99;
+
+// Slot mastery
+function getSlotBonusMultiplier() {
+  return 1 + slotMasteryLevel * 0.05;
+}
 
 function setupBoard() {
   pegs.length = 0;
@@ -119,31 +202,65 @@ function setupBoard() {
   const slotHeight = 40;
   const baseY = canvas.height - slotHeight;
 
-  const multipliers = [1, 1, 2, 2, 3, 5, 3, 2, 2, 1];
+  const baseMultipliers = [1, 1, 2, 2, 3, 5, 3, 2, 2, 1];
+  const bonus = getSlotBonusMultiplier();
 
   for (let i = 0; i < slotCount; i++) {
     const x = i * slotWidth;
+    const m = (baseMultipliers[i] || 1) * bonus;
     slots.push({
       x,
       y: baseY,
       w: slotWidth,
       h: slotHeight,
-      multiplier: multipliers[i] || 1
+      baseMultiplier: baseMultipliers[i] || 1,
+      multiplier: m
     });
   }
 }
-
 setupBoard();
+
+// --- Special ball helpers ---
+function recalcSpecialStats() {
+  specialChance = baseSpecialChance * (1 + goldenPowerLevel * 0.25);
+  specialValuePerHit = baseSpecialValuePerHit * (1 + goldenPowerLevel * 0.5);
+}
+
+recalcSpecialStats();
+
+// jackpot focus из коробки
+let boxJackpotFocusLevel = 0;
+
+function getSpawnX() {
+  const center = canvas.width / 2;
+  if (boxJackpotFocusLevel <= 0) return center;
+
+  const maxOffset = canvas.width * 0.3;
+  const rand = (Math.random() - 0.5) * maxOffset;
+  const focused = center + rand / (1 + boxJackpotFocusLevel);
+  return Math.max(BALL_RADIUS, Math.min(canvas.width - BALL_RADIUS, focused));
+}
 
 function createBall() {
   const activeCount = balls.filter(b => b.alive).length;
   if (activeCount >= maxActiveBalls) return;
 
-  const x = canvas.width / 2;
+  const x = getSpawnX();
   const y = 10;
   const vx = (Math.random() - 0.5) * 1.5;
   const vy = 0;
-  balls.push({ x, y, vx, vy, r: BALL_RADIUS, alive: true });
+
+  const isSpecial = Math.random() < specialChance;
+
+  balls.push({
+    x,
+    y,
+    vx,
+    vy,
+    r: BALL_RADIUS,
+    alive: true,
+    special: isSpecial
+  });
 }
 
 function resolveBallPegCollision(ball, peg) {
@@ -166,6 +283,15 @@ function resolveBallPegCollision(ball, peg) {
 
     ball.vx *= BOUNCE;
     ball.vy *= BOUNCE;
+
+    if (ball.special) {
+      const baseHitIncome = ballLevel * specialValuePerHit;
+      const total = baseHitIncome * getTotalIncomeMultiplier();
+      const gain = Math.max(1, Math.floor(total));
+      coins += gain;
+      allTimeCoins += gain;
+      spawnHitPopup(ball.x, ball.y, gain);
+    }
   }
 }
 
@@ -210,10 +336,16 @@ function updateBalls(deltaTime) {
   }
 }
 
+function getTotalIncomeMultiplier() {
+  const prestigeSpeedMult = 1 + prestigeSpeedLevel * 0.5;
+  return crystalMultiplier * prestigeSpeedMult;
+}
+
 function handleBallInSlot(ball, slot) {
   ball.alive = false;
   const baseGain = ballLevel * slot.multiplier;
-  const gain = Math.floor(baseGain * crystalMultiplier);
+  const totalMult = getTotalIncomeMultiplier();
+  const gain = Math.max(1, Math.floor(baseGain * totalMult));
   coins += gain;
   allTimeCoins += gain;
   spawnHitPopup(ball.x, slot.y, gain);
@@ -265,9 +397,10 @@ function drawBoard() {
 
   for (const slot of slots) {
     let color = '#4b5563';
-    if (slot.multiplier === 2) color = '#facc15';
-    else if (slot.multiplier === 3) color = '#f97316';
-    else if (slot.multiplier === 5) color = '#ef4444';
+    const roundedMult = Math.round(slot.multiplier * 10) / 10;
+    if (roundedMult >= 2 && roundedMult < 3) color = '#facc15';
+    else if (roundedMult >= 3 && roundedMult < 5) color = '#f97316';
+    else if (roundedMult >= 5) color = '#ef4444';
 
     ctx.fillStyle = color;
     ctx.fillRect(slot.x, slot.y, slot.w, slot.h);
@@ -276,7 +409,7 @@ function drawBoard() {
     ctx.font = '12px system-ui';
     ctx.textAlign = 'center';
     ctx.fillText(
-      'x' + slot.multiplier,
+      'x' + roundedMult.toFixed(1),
       slot.x + slot.w / 2,
       slot.y + slot.h / 2 + 4
     );
@@ -284,11 +417,11 @@ function drawBoard() {
 }
 
 function drawBalls() {
-  ctx.fillStyle = '#f97316';
   for (const ball of balls) {
     if (!ball.alive) continue;
     ctx.beginPath();
     ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+    ctx.fillStyle = ball.special ? '#facc15' : '#f97316';
     ctx.fill();
   }
 }
@@ -306,21 +439,113 @@ function updateAutoDrop(deltaTime) {
 }
 
 // --- Prestige logic ---
+// считаем только прирост с прошлого престижа
 function computeCrystalsGain() {
   const effectiveCoins = allTimeCoins - allTimeCoinsSpentOnPrestige;
-  if (effectiveCoins < 10000) return 0;
+  if (effectiveCoins < 5000) return 0;
 
-  const base = effectiveCoins / 10000;
-  const gain = Math.floor(Math.pow(base, 0.4));
+  const base = effectiveCoins / 5000;
+  let gain = Math.floor(Math.pow(base, 0.6));
+  gain = Math.floor(gain * (1 + prestigeBoosterLevel * 0.25));
+  if (gain < 0) gain = 0;
   return gain;
 }
 
 function updateCrystalMultiplier() {
-  crystalMultiplier = 1 + crystals * 0.1;
+  crystalMultiplier = 1 + crystals * 0.15;
+}
+
+// --- Box bonuses ---
+const BOX_BONUS_TYPES = [
+  {
+    id: 'slot_mult',
+    title: 'Slot Multiplier',
+    desc: '+0.1 to all slot multipliers permanently.',
+    apply: () => {
+      slotMasteryLevel += 1;
+      slotMasteryCost += 3;
+      setupBoard();
+    }
+  },
+  {
+    id: 'jackpot_focus',
+    title: 'Jackpot Focus',
+    desc: 'Balls spawn slightly closer to the center (better for big slots).',
+    apply: () => {
+      boxJackpotFocusLevel++;
+    }
+  },
+  {
+    id: 'golden_boost',
+    title: 'Golden Boost',
+    desc: '+25% income from special ball hits.',
+    apply: () => {
+      goldenPowerLevel += 1;
+      goldenPowerCost += 3;
+      recalcSpecialStats();
+    }
+  },
+  {
+    id: 'crystal_gain',
+    title: 'Crystal Gain',
+    desc: '+15% crystals from prestige.',
+    apply: () => {
+      prestigeBoosterLevel += 1;
+      prestigeBoosterCost += 3;
+    }
+  },
+  {
+    id: 'soft_save_plus',
+    title: 'Soft Save+',
+    desc: '+5% preserved normal upgrades after prestige.',
+    apply: () => {
+      softSaveLevel += 1;
+      softSaveCost += 3;
+    }
+  }
+];
+
+let currentBoxOptions = [];
+
+function openBox() {
+  if (crystals < boxCost) return;
+  crystals -= boxCost;
+
+  const pool = [...BOX_BONUS_TYPES];
+  currentBoxOptions = [];
+  for (let i = 0; i < 3 && pool.length > 0; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    currentBoxOptions.push(pool.splice(idx, 1)[0]);
+  }
+
+  if (currentBoxOptions[0]) {
+    boxCardTitle0.textContent = currentBoxOptions[0].title;
+    boxCardDesc0.textContent = currentBoxOptions[0].desc;
+  }
+  if (currentBoxOptions[1]) {
+    boxCardTitle1.textContent = currentBoxOptions[1].title;
+    boxCardDesc1.textContent = currentBoxOptions[1].desc;
+  }
+  if (currentBoxOptions[2]) {
+    boxCardTitle2.textContent = currentBoxOptions[2].title;
+    boxCardDesc2.textContent = currentBoxOptions[2].desc;
+  }
+
+  boxOverlay.classList.add('open');
+  updateUI();
+}
+
+function chooseBoxOption(index) {
+  const opt = currentBoxOptions[index];
+  if (!opt) return;
+  opt.apply();
+  currentBoxOptions = [];
+  boxOverlay.classList.remove('open');
+  updateUI();
 }
 
 // --- Save / load ---
-const SAVE_KEY = 'plinko_incremental_save';
+const SAVE_KEY = 'plinko_incremental_save_v4';
 
 function saveGame() {
   const data = {
@@ -334,7 +559,21 @@ function saveGame() {
     hitEffectsEnabled,
     allTimeCoins,
     allTimeCoinsSpentOnPrestige,
-    crystals
+    crystals,
+
+    prestigeBoosterLevel,
+    prestigeBoosterCost,
+    softSaveLevel,
+    softSaveCost,
+    prestigeSpeedLevel,
+    prestigeSpeedCost,
+    goldenPowerLevel,
+    goldenPowerCost,
+    slotMasteryLevel,
+    slotMasteryCost,
+
+    boxCost,
+    boxJackpotFocusLevel
   };
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify(data));
@@ -363,16 +602,32 @@ function loadGame() {
       allTimeCoinsSpentOnPrestige = data.allTimeCoinsSpentOnPrestige;
     }
     if (typeof data.crystals === 'number') crystals = data.crystals;
+
+    if (typeof data.prestigeBoosterLevel === 'number') prestigeBoosterLevel = data.prestigeBoosterLevel;
+    if (typeof data.prestigeBoosterCost === 'number') prestigeBoosterCost = data.prestigeBoosterCost;
+    if (typeof data.softSaveLevel === 'number') softSaveLevel = data.softSaveLevel;
+    if (typeof data.softSaveCost === 'number') softSaveCost = data.softSaveCost;
+    if (typeof data.prestigeSpeedLevel === 'number') prestigeSpeedLevel = data.prestigeSpeedLevel;
+    if (typeof data.prestigeSpeedCost === 'number') prestigeSpeedCost = data.prestigeSpeedCost;
+    if (typeof data.goldenPowerLevel === 'number') goldenPowerLevel = data.goldenPowerLevel;
+    if (typeof data.goldenPowerCost === 'number') goldenPowerCost = data.goldenPowerCost;
+    if (typeof data.slotMasteryLevel === 'number') slotMasteryLevel = data.slotMasteryLevel;
+    if (typeof data.slotMasteryCost === 'number') slotMasteryCost = data.slotMasteryCost;
+
+    if (typeof data.boxCost === 'number') boxCost = data.boxCost;
+    if (typeof data.boxJackpotFocusLevel === 'number') boxJackpotFocusLevel = data.boxJackpotFocusLevel;
   } catch (e) {
     console.warn('Load failed', e);
   }
   updateCrystalMultiplier();
+  recalcSpecialStats();
+  setupBoard();
 }
 
 // --- Hard reset ---
 function hardReset() {
-  if (!confirm('Hard reset EVERYTHING? This includes crystals.')) return;
-  
+  if (!confirm('Hard reset EVERYTHING? This includes crystals and bonuses.')) return;
+
   coins = 0;
   ballLevel = 1;
   upgradeCost = 10;
@@ -386,7 +641,23 @@ function hardReset() {
   allTimeCoins = 0;
   allTimeCoinsSpentOnPrestige = 0;
   crystals = 0;
-  updateCrystalMultiplier();
+  crystalMultiplier = 1;
+
+  prestigeBoosterLevel = 0;
+  prestigeBoosterCost = 5;
+  softSaveLevel = 0;
+  softSaveCost = 5;
+  prestigeSpeedLevel = 0;
+  prestigeSpeedCost = 5;
+  goldenPowerLevel = 0;
+  goldenPowerCost = 5;
+  slotMasteryLevel = 0;
+  slotMasteryCost = 5;
+  boxCost = 10;
+  boxJackpotFocusLevel = 0;
+
+  recalcSpecialStats();
+  setupBoard();
 
   try {
     localStorage.removeItem(SAVE_KEY);
@@ -407,17 +678,25 @@ function doPrestige() {
   crystals += gain;
   updateCrystalMultiplier();
 
-  // считаем, что все текущие allTimeCoins уже учтены
+  // фиксируем точку, от которой дальше считаем новые монеты
   allTimeCoinsSpentOnPrestige = allTimeCoins;
 
-  // сброс обычного прогресса
+  // Soft Save
+  const keepPercent = Math.min(softSaveLevel * 0.15, 0.9);
+
+  const keptBallLevel = 1 + Math.floor((ballLevel - 1) * keepPercent);
+  const keptMaxBalls = 1 + Math.floor((maxActiveBalls - 1) * keepPercent);
+  const keptAutoDropLevel = Math.floor(autoDropLevel * keepPercent);
+
   coins = 0;
-  ballLevel = 1;
-  upgradeCost = 10;
-  maxActiveBalls = 1;
-  maxBallsUpgradeCost = 50;
-  autoDropLevel = 0;
-  autoDropUpgradeCost = 100;
+  ballLevel = keptBallLevel;
+  upgradeCost = Math.floor(10 * Math.pow(1.5, ballLevel - 1));
+
+  maxActiveBalls = keptMaxBalls;
+  maxBallsUpgradeCost = Math.floor(50 * Math.pow(1.8, maxActiveBalls - 1));
+
+  autoDropLevel = keptAutoDropLevel;
+  autoDropUpgradeCost = 100 * Math.pow(2, autoDropLevel);
   autoDropTimer = 0;
 
   updateUI();
@@ -425,12 +704,12 @@ function doPrestige() {
 
 // --- UI ---
 function updateUI() {
-  coinsSpan.textContent = coins;
+  if (coinsSpan) coinsSpan.textContent = coins;
   if (coinsUpgradesSpan) coinsUpgradesSpan.textContent = coins;
 
-  ballLevelSpan.textContent = ballLevel;
+  if (ballLevelSpan) ballLevelSpan.textContent = ballLevel;
   if (ballLevelUpgradeSpan) ballLevelUpgradeSpan.textContent = ballLevel;
-  upgradeCostSpan.textContent = upgradeCost;
+  if (upgradeCostSpan) upgradeCostSpan.textContent = upgradeCost;
 
   if (maxBallsSpan) maxBallsSpan.textContent = maxActiveBalls;
   if (maxBallsCostSpan) maxBallsCostSpan.textContent = maxBallsUpgradeCost;
@@ -439,7 +718,6 @@ function updateUI() {
 
   if (hitEffectsToggle) hitEffectsToggle.checked = hitEffectsEnabled;
 
-  // Prestige UI
   if (allTimeCoinsSpan) allTimeCoinsSpan.textContent = allTimeCoins;
   if (crystalsSpan) crystalsSpan.textContent = crystals;
   if (crystalMultiplierSpan) crystalMultiplierSpan.textContent = crystalMultiplier.toFixed(2);
@@ -447,6 +725,34 @@ function updateUI() {
   const gain = computeCrystalsGain();
   if (crystalsGainSpan) crystalsGainSpan.textContent = gain;
   if (prestigeBtn) prestigeBtn.disabled = gain <= 0;
+
+  if (prestigeBoosterLevelSpan) prestigeBoosterLevelSpan.textContent = prestigeBoosterLevel;
+  if (prestigeBoosterCostSpan) prestigeBoosterCostSpan.textContent = prestigeBoosterCost;
+
+  if (softSaveLevelSpan) softSaveLevelSpan.textContent = softSaveLevel;
+  if (softSaveCostSpan) softSaveCostSpan.textContent = softSaveCost;
+
+  if (prestigeSpeedLevelSpan) prestigeSpeedLevelSpan.textContent = prestigeSpeedLevel;
+  if (prestigeSpeedCostSpan) prestigeSpeedCostSpan.textContent = prestigeSpeedCost;
+
+  if (goldenPowerLevelSpan) goldenPowerLevelSpan.textContent = goldenPowerLevel;
+  if (goldenPowerCostSpan) goldenPowerCostSpan.textContent = goldenPowerCost;
+
+  if (slotMasteryLevelSpan) slotMasteryLevelSpan.textContent = slotMasteryLevel;
+  if (slotMasteryCostSpan) slotMasteryCostSpan.textContent = slotMasteryCost;
+
+  if (boxCostSpan) boxCostSpan.textContent = boxCost;
+
+  if (specialChanceDisplay) {
+    specialChanceDisplay.textContent = (specialChance * 100).toFixed(1) + '%';
+  }
+  if (specialValueDisplay) {
+    specialValueDisplay.textContent = specialValuePerHit.toFixed(2);
+  }
+
+  if (devPanel) {
+    devPanel.style.display = DEV_MODE ? 'block' : 'none';
+  }
 
   saveGame();
 }
@@ -484,6 +790,113 @@ if (upgradeAutoDropBtn) {
 if (prestigeBtn) {
   prestigeBtn.addEventListener('click', () => {
     doPrestige();
+  });
+}
+
+// Prestige upgrades
+if (buyPrestigeBoosterBtn) {
+  buyPrestigeBoosterBtn.addEventListener('click', () => {
+    if (crystals < prestigeBoosterCost) return;
+    crystals -= prestigeBoosterCost;
+    prestigeBoosterLevel++;
+    prestigeBoosterCost = Math.floor(prestigeBoosterCost * 1.6 + 1);
+    updateUI();
+  });
+}
+
+if (buySoftSaveBtn) {
+  buySoftSaveBtn.addEventListener('click', () => {
+    if (crystals < softSaveCost) return;
+    crystals -= softSaveCost;
+    softSaveLevel++;
+    softSaveCost = Math.floor(softSaveCost * 1.7 + 1);
+    updateUI();
+  });
+}
+
+if (buyPrestigeSpeedBtn) {
+  buyPrestigeSpeedBtn.addEventListener('click', () => {
+    if (crystals < prestigeSpeedCost) return;
+    crystals -= prestigeSpeedCost;
+    prestigeSpeedLevel++;
+    prestigeSpeedCost = Math.floor(prestigeSpeedCost * 1.7 + 1);
+    updateUI();
+  });
+}
+
+if (buyGoldenPowerBtn) {
+  buyGoldenPowerBtn.addEventListener('click', () => {
+    if (crystals < goldenPowerCost) return;
+    crystals -= goldenPowerCost;
+    goldenPowerLevel++;
+    goldenPowerCost = Math.floor(goldenPowerCost * 1.7 + 1);
+    recalcSpecialStats();
+    updateUI();
+  });
+}
+
+if (buySlotMasteryBtn) {
+  buySlotMasteryBtn.addEventListener('click', () => {
+    if (crystals < slotMasteryCost) return;
+    crystals -= slotMasteryCost;
+    slotMasteryLevel++;
+    slotMasteryCost = Math.floor(slotMasteryCost * 1.7 + 1);
+    setupBoard();
+    updateUI();
+  });
+}
+
+// Box
+if (buyBoxBtn) {
+  buyBoxBtn.addEventListener('click', () => {
+    openBox();
+  });
+}
+
+if (closeBoxBtn && boxOverlay) {
+  closeBoxBtn.addEventListener('click', () => {
+    boxOverlay.classList.remove('open');
+  });
+  boxOverlay.addEventListener('click', (e) => {
+    if (e.target === boxOverlay) {
+      boxOverlay.classList.remove('open');
+    }
+  });
+}
+
+boxCardChooseBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const index = parseInt(btn.dataset.index, 10);
+    chooseBoxOption(index);
+  });
+});
+
+// Dev panel
+if (devGiveCoinsBtn) {
+  devGiveCoinsBtn.addEventListener('click', () => {
+    if (!DEV_MODE) return;
+    const add = 1e6;
+    coins += add;
+    allTimeCoins += add;
+    updateUI();
+  });
+}
+
+if (devGiveCrystalsBtn) {
+  devGiveCrystalsBtn.addEventListener('click', () => {
+    if (!DEV_MODE) return;
+    crystals += 100;
+    updateCrystalMultiplier();
+    updateUI();
+  });
+}
+
+if (devResetPrestigeSpentBtn) {
+  devResetPrestigeSpentBtn.addEventListener('click', () => {
+    if (!DEV_MODE) return;
+    // считаем, что "новых" монет пока нет
+    allTimeCoinsSpentOnPrestige = allTimeCoins;
+    updateUI();
   });
 }
 
